@@ -4,7 +4,6 @@ const util = require('util');
 const mkdirSync = util.promisify(fs.mkdirSync)
 const request = require('request');
 var http = require('http');
-
 let DEBUGMODE = false;
 let GROCERIES;
 if(DEBUGMODE){
@@ -12,15 +11,8 @@ if(DEBUGMODE){
 } else {
     GROCERIES = require('./data/groceries.json');
 }
-
 const NOTFOUND = [];
 
-//logging 
-// const access = fs.createWriteStream('/groceries/logs' + '/node.access.log', { flags: 'a' });
-// const error = fs.createWriteStream('/groceries/logs' + '/node.error.log', { flags: 'a' });
-// // redirect stdout / stderr
-// process.stdout.pipe(access);
-// process.stderr.pipe(error);
 function timeDiffCalc(dateFuture, dateNow) {
     let diffInMilliSeconds = Math.abs(dateFuture - dateNow) / 1000;
 
@@ -48,35 +40,8 @@ function timeDiffCalc(dateFuture, dateNow) {
   }
 
 // end logging
-// IMAGE DOWNLOAD FUNCTION
-// const download = function(uri, sym, filename, callback){
-//     request.head(uri, function(err, res, body){
-//         if(res.headers['content-type'] != 'image/png'){
-//             NOTFOUND.push(sym);
-//             return console.log(`${sym} - not found`)
-//         }
-
-//         console.log(`${sym}.png - ${(res.headers['content-length'] / 1024).toFixed(2)} Kb`, );
-
-//         request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
-//     });
-// };
-
-// const start = () => {
-//     for(let sym of SYMBOL){
-//         download(`https://g.foolcdn.com/art/companylogos/square/${sym.symbol.toLowerCase()}.png`, sym.symbol, `download/foolcdn/${sym.symbol}.jpg`, function(){
-//             console.log(`${sym.symbol}.jpg - saved to disk.`);
-//         });
-//     }
-// }
-
-// download source
-// https://g.foolcdn.com/art/companylogos/square/googl.png
-
-// other
-
-// https://g.foolcdn.com/art/companylogos/mark/googl.png
-
+// ----------------------------------------------------
+// DOWNLOAD STOCK MARKET LOGOS
 // download stock market logos from foolcdn
 var rDownload = function (urlArray, i) {
     if (i < urlArray.length) {
@@ -101,7 +66,12 @@ var rDownload = function (urlArray, i) {
             })
     }
 }
-//console.log(GROCERIES[0]);
+// run the logo downloader
+//rDownload(SYMBOL, 0);
+
+// ----------------------------------------------------
+// DOWNLOAD GROCERY PRODUCT IMAGES
+
 console.clear();
 let downloadableItemArray = [];
 
@@ -116,7 +86,8 @@ for(let item of GROCERIES){
         // 200x     - 0.235mb
         // 250x     - 0.338mb
         let obj = {
-            url: image.replace('cloudfront.net/750x/', 'cloudfront.net/250x/'),
+            // url: image.replace('cloudfront.net/750x/', 'cloudfront.net/250x/'),
+            url: image,
             id: id,
             i: index
         }
@@ -190,8 +161,6 @@ const itemDownload = async function (obj) {
 }
 console.log(downloadableItemArray.length);
 // run the grocery downloader
-let counter = 0; // what do you want to start at;
+let counter = 32182; // what do you want to start at;
 itemDownload(downloadableItemArray[counter]);
 
-// run the logo downloader
-//rDownload(SYMBOL, 0);
